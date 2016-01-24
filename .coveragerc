@@ -1,0 +1,5 @@
+[run]
+include = maxoshop_project/*
+omit = *migrations*, *tests*
+plugins =
+    django_coverage_plugin
