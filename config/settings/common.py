@@ -9,6 +9,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/dev/ref/settings/
 """
 from __future__ import absolute_import, unicode_literals
+from decimal import Decimal
+from django.utils.translation import ugettext_lazy as _
 
 import environ
 
@@ -22,17 +24,54 @@ env = environ.Env()
 DJANGO_APPS = (
     # Default Django apps:
     'django.contrib.auth',
+    'polymorphic',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
+    'djangocms_admin_style',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+		'django.contrib.sitemaps',
+
+		# CMS
+    'djangocms_text_ckeditor',
+    'django_select2',
+    'cmsplugin_cascade',
+    #'cmsplugin_cascade.clipboard',
+    'cmsplugin_cascade.sharable',
+    'cmsplugin_cascade.extra_fields',
+    'cmsplugin_cascade.segmentation',
+    'cms_bootstrap3',
+    'adminsortable2',
+    'rest_framework',
+    'rest_framework.authtoken',
+    'rest_auth',
+    'fsm_admin',
+    'djangular',
+    'cms',
+    'menus',
+    'treebeard',
+    'compressor',
+    'sekizai',
+    'sass_processor',
+    'django_filters',
+    'filer',
+    'easy_thumbnails',
+    'easy_thumbnails.optimize',
+    'parler',
+    'post_office',
+    'haystack',
+
+    # Django-shop
+    'shop',
+    'shop_stripe',
 
     # Useful template tags:
     # 'django.contrib.humanize',
 
     # Admin
     'django.contrib.admin',
+
 )
 THIRD_PARTY_APPS = (
     'crispy_forms',  # Form layouts
@@ -45,6 +84,7 @@ THIRD_PARTY_APPS = (
 LOCAL_APPS = (
     'maxoshop_project.users',  # custom users app
     # Your stuff: custom apps go here
+    'maxoshop_project.maxoshop',  # custom users app
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -54,9 +94,17 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 # ------------------------------------------------------------------------------
 MIDDLEWARE_CLASSES = (
     # Make sure djangosecure.middleware.SecurityMiddleware is listed first
+    'djangular.middleware.DjangularUrlMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'shop.middleware.CustomerMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
+    'django.middleware.gzip.GZipMiddleware',
+    'cms.middleware.language.LanguageCookieMiddleware',
+    'cms.middleware.user.CurrentUserMiddleware',
+    'cms.middleware.page.CurrentPageMiddleware',
+    'cms.middleware.toolbar.ToolbarMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -99,7 +147,9 @@ MANAGERS = ADMINS
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#databases
 DATABASES = {
     # Raises ImproperlyConfigured exception if DATABASE_URL not in os.environ
-    'default': env.db("DATABASE_URL", default="postgres:///maxoshop_project"),
+		# DATABASE_URL=psql://urser:un-githubbedpassword@127.0.0.1:8458/database
+    #'default': env.db("DATABASE_URL", default="postgres:///maxoshop_project"),
+		'default': env.db("DATABASE_URL", default="psql://maxo:maxopw@127.0.0.1:5432/maxoshop_project"),
 }
 DATABASES['default']['ATOMIC_REQUESTS'] = True
 
@@ -113,7 +163,12 @@ DATABASES['default']['ATOMIC_REQUESTS'] = True
 TIME_ZONE = 'UTC'
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#language-code
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'en'
+
+LANGUAGES = (
+    ('en', "English"),
+    ('de', "Deutsch"),
+)
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#site-id
 SITE_ID = 1
@@ -156,7 +211,12 @@ TEMPLATES = [
                 'django.template.context_processors.media',
                 'django.template.context_processors.static',
                 'django.template.context_processors.tz',
+								'django.template.context_processors.csrf',
                 'django.contrib.messages.context_processors.messages',
+								'sekizai.context_processors.sekizai',
+								'cms.context_processors.cms_settings',
+								'shop.context_processors.customer',
+								'shop_stripe.context_processors.public_keys',
                 # Your stuff: custom template context processors go here
             ],
         },
@@ -177,12 +237,16 @@ STATIC_URL = '/static/'
 # See: https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#std:setting-STATICFILES_DIRS
 STATICFILES_DIRS = (
     str(APPS_DIR.path('static')),
+    ('bower_components', ROOT_DIR('bower_components')),
+    ('node_modules', ROOT_DIR('node_modules')),
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#staticfiles-finders
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'sass_processor.finders.CssFinder',
+    'compressor.finders.CompressorFinder',
 )
 
 # MEDIA CONFIGURATION
@@ -226,3 +290,299 @@ AUTOSLUG_SLUGIFY_FUNCTION = 'slugify.slugify'
 ADMIN_URL = r'^admin/'
 
 # Your common stuff: Below this line define 3rd party library settings
+
+SECURE_PROXY_SSL_HEADER = (u'HTTP_X_FORWARDED_PROTO', u'https')
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': True,
+    'filters': {
+         'require_debug_false': {
+             '()': 'django.utils.log.RequireDebugFalse',
+         }
+    },
+    'formatters': {
+        'simple': {
+            'format': '[%(asctime)s %(module)s] %(levelname)s: %(message)s'
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    },
+}
+
+SILENCED_SYSTEM_CHECKS = ('auth.W004')
+
+############################################
+# settings for sending mail
+
+EMAIL_HOST = 'smtp.example.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'no-reply@example.com'
+EMAIL_HOST_PASSWORD = 'smtp-secret-password'
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = 'My Shop <no-reply@example.com>'
+EMAIL_REPLY_TO = 'info@example.com'
+EMAIL_BACKEND = 'post_office.EmailBackend'
+
+############################################
+# settings for third party Django apps
+
+NODE_MODULES_URL = STATIC_URL + 'node_modules/'
+
+SASS_PROCESSOR_INCLUDE_DIRS = (
+    ROOT_DIR('node_modules'),
+)
+
+COERCE_DECIMAL_TO_STRING = True
+
+COMPRESS_ENABLED = False
+
+FSM_ADMIN_FORCE_PERMIT = True
+
+PARLER_DEFAULT_LANGUAGE = 'de'
+
+PARLER_LANGUAGES = {
+    1: (
+        {'code': 'de'},
+        {'code': 'en'},
+    ),
+    'default': {
+        'fallbacks': ['de', 'en'],
+    },
+}
+
+ROBOTS_META_TAGS = ('noindex', 'nofollow')
+
+############################################
+# settings for django-restframework and plugins
+
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': (
+        'shop.rest.money.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',  # can be disabled for production environments
+    ),
+    # 'DEFAULT_AUTHENTICATION_CLASSES': (
+    #   'rest_framework.authentication.TokenAuthentication',
+    # ),
+    'DEFAULT_FILTER_BACKENDS': ('rest_framework.filters.DjangoFilterBackend',),
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 12,
+}
+
+SERIALIZATION_MODULES = {'json': b'shop.money.serializers'}
+
+
+############################################
+# settings for storing session data
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
+SESSION_SAVE_EVERY_REQUEST = True
+
+
+############################################
+# settings for storing files and images
+
+FILER_ADMIN_ICON_SIZES = ('16', '32', '48', '80', '128')
+
+FILER_ALLOW_REGULAR_USERS_TO_ADD_ROOT_FOLDERS = True
+
+FILER_DUMP_PAYLOAD = False
+
+FILE_UPLOAD_MAX_MEMORY_SIZE = 5242880
+
+THUMBNAIL_HIGH_RESOLUTION = False
+
+THUMBNAIL_OPTIMIZE_COMMAND = {
+    'gif': '/opt/local/bin/optipng {filename}',
+    'jpeg': '/opt/local/bin/jpegoptim {filename}',
+    'png': '/opt/local/bin/optipng {filename}'
+}
+
+THUMBNAIL_PRESERVE_EXTENSIONS = True
+
+THUMBNAIL_PROCESSORS = (
+    'easy_thumbnails.processors.colorspace',
+    'easy_thumbnails.processors.autocrop',
+    'filer.thumbnail_processors.scale_and_crop_with_subject_location',
+    'easy_thumbnails.processors.filters',
+)
+
+
+############################################
+# settings for django-cms and its plugins
+
+CMS_TEMPLATES = (
+    ('maxoshop/pages/default.html', _("Default Page")),
+)
+
+CMS_LANGUAGES = {
+    'default': {
+        'fallbacks': ['en', 'de'],
+        'redirect_on_fallback': True,
+        'public': True,
+        'hide_untranslated': False,
+    },
+    1: ({
+        'public': True,
+        'code': 'en',
+        'hide_untranslated': False,
+        'name': 'English',
+        'redirect_on_fallback': True,
+    }, {
+        'public': True,
+        'code': 'de',
+        'hide_untranslated': False,
+        'name': 'Deutsch',
+        'redirect_on_fallback': True,
+    },)
+}
+
+CMS_CACHE_DURATIONS = {
+    'content': 600,
+    'menus': 3600,
+    'permissions': 86400,
+}
+
+CMS_PERMISSION = False
+
+CMS_PLACEHOLDER_CONF = {
+    'Main Content Container': {
+        'plugins': ['BootstrapRowPlugin', 'SimpleWrapperPlugin', 'SegmentPlugin'],
+        'text_only_plugins': ['TextLinkPlugin'],
+        'parent_classes': {'BootstrapRowPlugin': []},
+        'require_parent': False,
+        'glossary': {
+            'breakpoints': ['xs', 'sm', 'md', 'lg'],
+            'container_max_widths': {'xs': 750, 'sm': 750, 'md': 970, 'lg': 1170},
+            'fluid': False,
+            'media_queries': {
+                'xs': ['(max-width: 768px)'],
+                'sm': ['(min-width: 768px)', '(max-width: 992px)'],
+                'md': ['(min-width: 992px)', '(max-width: 1200px)'],
+                'lg': ['(min-width: 1200px)'],
+            },
+        },
+    },
+}
+
+CMSPLUGIN_CASCADE_PLUGINS = ('cmsplugin_cascade.segmentation', 'cmsplugin_cascade.generic',
+    'cmsplugin_cascade.link', 'shop.cascade', 'cmsplugin_cascade.bootstrap3',)
+
+CMSPLUGIN_CASCADE = {
+    'dependencies': {
+        'shop/js/admin/shoplinkplugin.js': 'cascade/js/admin/linkpluginbase.js',
+    },
+    'alien_plugins': ('TextPlugin', 'TextLinkPlugin',),
+    'bootstrap3': {
+        'template_basedir': 'angular-ui',
+    },
+    'plugins_with_extra_fields': (
+        'BootstrapButtonPlugin',
+        'BootstrapRowPlugin',
+        'SimpleWrapperPlugin',
+        'HorizontalRulePlugin',
+        'ExtraAnnotationFormPlugin',
+    ),
+    'segmentation_mixins': (
+        ('shop.cascade.segmentation.EmulateCustomerModelMixin', 'shop.cascade.segmentation.EmulateCustomerAdminMixin'),
+    ),
+}
+
+CMSPLUGIN_CASCADE_LINKPLUGIN_CLASSES = (
+    'shop.cascade.plugin_base.CatalogLinkPluginBase',
+    'cmsplugin_cascade.link.plugin_base.LinkElementMixin',
+    'shop.cascade.plugin_base.CatalogLinkForm',
+)
+
+CKEDITOR_SETTINGS = {
+    'language': '{{ language }}',
+    'skin': 'moono',
+    'toolbar': 'CMS',
+    'toolbar_HTMLField': [
+        ['Undo', 'Redo'],
+        ['cmsplugins', '-', 'ShowBlocks'],
+        ['Format', 'Styles'],
+        ['TextColor', 'BGColor', '-', 'PasteText', 'PasteFromWord'],
+        ['Maximize', ''],
+        '/',
+        ['Bold', 'Italic', 'Underline', '-', 'Subscript', 'Superscript', '-', 'RemoveFormat'],
+        ['JustifyLeft', 'JustifyCenter', 'JustifyRight'],
+        ['HorizontalRule'],
+        ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Table'],
+        ['Source']
+    ],
+}
+
+SELECT2_CSS = 'bower_components/select2/dist/css/select2.min.css'
+SELECT2_JS = 'bower_components/select2/dist/js/select2.min.js'
+
+
+#############################################
+# settings for full index text search (Haystack)
+
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
+        'URL': 'http://localhost:9200/',
+        'INDEX_NAME': 'shop-de',
+    },
+    'en': {
+        'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
+        'URL': 'http://localhost:9200/',
+        'INDEX_NAME': 'shop-en',
+    },
+}
+
+HAYSTACK_ROUTERS = ('shop.search.routers.LanguageRouter',)
+
+############################################
+# settings for django-shop and its plugins
+
+SHOP_VALUE_ADDED_TAX = Decimal(19)
+SHOP_DEFAULT_CURRENCY = 'EUR'
+SHOP_CART_MODIFIERS = (
+    'maxoshop.polymorphic_modifiers.MyShopCartModifier',
+    'shop.modifiers.taxes.CartExcludedTaxModifier',
+    'maxoshop.modifiers.PostalShippingModifier',
+    'shop.modifiers.defaults.PayInAdvanceModifier',
+    'shop_stripe.modifiers.StripePaymentModifier',
+)
+SHOP_EDITCART_NG_MODEL_OPTIONS = "{updateOn: 'default blur', debounce: {'default': 2500, 'blur': 0}}"
+
+SHOP_ORDER_WORKFLOWS = (
+    'shop.payment.defaults.PayInAdvanceWorkflowMixin',
+    'shop.payment.defaults.CommissionGoodsWorkflowMixin',
+    'shop_stripe.payment.OrderWorkflowMixin',
+)
+
+SHOP_STRIPE = {
+    'PUBKEY': 'pk_test_stripe_secret',
+    'APIKEY': 'sk_test_stripe_secret',
+    'PURCHASE_DESCRIPTION': _("Thanks for purchasing at MyShop"),
+}
+
+for priv_attr in ('SHOP_STRIPE', 'DATABASES'):
+    try:
+        from . import private_settings
+        vars()[priv_attr].update(getattr(private_settings, priv_attr))
+    except AttributeError:
+        continue
+    except KeyError:
+        vars()[priv_attr] = getattr(private_settings, priv_attr)
+    except ImportError:
+        break
+
+
+
