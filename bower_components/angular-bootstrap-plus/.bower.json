@@ -1,0 +1,37 @@
+{
+  "name": "angular-bootstrap-plus",
+  "version": "0.0.3",
+  "homepage": "http://jrief.github.io/angular-bootstrap-plus/",
+  "authors": [
+    "Jacob Rief <jacob.rief@gmail.com>"
+  ],
+  "description": "Additional directives for Angular with Bootstrap",
+  "main": [
+    "./dist/bootstrap-plus.js",
+    "./dist/bootstrap-plus.css"
+  ],
+  "keywords": [
+    "AngularJS",
+    "directives",
+    "select",
+    "Bootstrap"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {},
+  "_release": "0.0.3",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.0.3",
+    "commit": "f9dedc10a035e701266984f63d1d544c49bcfb5f"
+  },
+  "_source": "git://github.com/jrief/angular-bootstrap-plus.git",
+  "_target": "0.0.3",
+  "_originalSource": "angular-bootstrap-plus"
+}
