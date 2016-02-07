@@ -5,7 +5,7 @@ from rest_framework.settings import api_settings
 from shop.rest.filters import CMSPagesFilterBackend
 from shop.views.catalog import AddToCartView, ProductListView, ProductRetrieveView
 from shop.search.views import SearchView
-from myshop.serializers import (ProductSummarySerializer, ProductDetailSerializer,
+from maxoshop.serializers import (ProductSummarySerializer, ProductDetailSerializer,
     AddSmartCardToCartSerializer, AddSmartPhoneToCartSerializer)
 
 urlpatterns = patterns('',

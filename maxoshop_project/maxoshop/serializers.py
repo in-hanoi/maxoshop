@@ -7,9 +7,9 @@ from shop.rest.serializers import (ProductSummarySerializerBase, ProductDetailSe
     AddToCartSerializer)
 from shop.search.serializers import ProductSearchSerializer as ProductSearchSerializerBase
 if settings.SHOP_TUTORIAL in ('simple', 'i18n'):
-    Product = import_string('myshop.models.{}.smartcard.SmartCard'.format(settings.SHOP_TUTORIAL))
+    Product = import_string('maxoshop.models.{}.smartcard.SmartCard'.format(settings.SHOP_TUTORIAL))
 else:
-    Product = import_string('myshop.models.polymorphic.product.Product')
+    Product = import_string('maxoshop.models.polymorphic.product.Product')
 
 
 class ProductSummarySerializer(ProductSummarySerializerBase):

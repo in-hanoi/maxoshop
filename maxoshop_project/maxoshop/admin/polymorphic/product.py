@@ -11,9 +11,10 @@ from parler.admin import TranslatableAdmin
 from polymorphic.admin import (PolymorphicParentModelAdmin, PolymorphicChildModelAdmin,
     PolymorphicChildModelFilter)
 from shop.admin.product import CMSPageAsCategoryMixin, ProductImageInline
-from myshop.models.polymorphic.product import Product
-from myshop.models.polymorphic.smartcard import SmartCard
-from myshop.models.polymorphic.smartphone import OperatingSystem, SmartPhone, SmartPhoneModel
+# go up to app_module maxoshop: /maxoshop/admin/polymorphic/product.py
+from ...models.polymorphic.product import Product
+from ...models.polymorphic.smartcard import SmartCard
+from ...models.polymorphic.smartphone import OperatingSystem, SmartPhone, SmartPhoneModel
 
 
 class SmartCardAdmin(SortableAdminMixin, TranslatableAdmin, FrontendEditableAdminMixin,
@@ -73,7 +74,7 @@ class SmartPhoneAdmin(TranslatableAdmin, FrontendEditableAdminMixin,
         super(SmartPhoneAdmin, self).save_model(request, obj, form, change)
 
     def render_text_index(self, instance):
-        template = get_template('search/indexes/myshop/commodity_text.txt')
+        template = get_template('search/indexes/maxoshop/commodity_text.txt')
         return template.render(Context({'object': instance}))
     render_text_index.short_description = _("Text Index")
 

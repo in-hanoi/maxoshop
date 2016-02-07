@@ -2,8 +2,8 @@
 from __future__ import unicode_literals
 from django.conf.urls import patterns, url
 from shop.search.views import SearchView
-from myshop.models.commodity import Commodity
-from myshop.serializers import ProductSearchSerializer
+from maxoshop.models.commodity import Commodity
+from maxoshop.serializers import ProductSearchSerializer
 
 
 autocomplete_options = dict(

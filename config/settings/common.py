@@ -32,7 +32,7 @@ DJANGO_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
 		'django.contrib.sitemaps',
-
+		'email_auth',
 		# CMS
     'djangocms_text_ckeditor',
     'django_select2',
@@ -42,13 +42,13 @@ DJANGO_APPS = (
     'cmsplugin_cascade.extra_fields',
     'cmsplugin_cascade.segmentation',
     'cms_bootstrap3',
+		#
     'adminsortable2',
     'rest_framework',
     'rest_framework.authtoken',
     'rest_auth',
     'fsm_admin',
     'djangular',
-    'cms',
     'menus',
     'treebeard',
     'compressor',
@@ -82,38 +82,47 @@ THIRD_PARTY_APPS = (
 
 # Apps specific for this project go here.
 LOCAL_APPS = (
-    'maxoshop_project.users',  # custom users app
+    #'maxoshop_project.users',  # custom users app, load before cms
     # Your stuff: custom apps go here
     'maxoshop_project.maxoshop',  # custom users app
 )
 
+# Apps to load last
+LAST_APPS = (
+    'cms',
+)
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
-INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
+INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS + LAST_APPS
 
 # MIDDLEWARE CONFIGURATION
 # ------------------------------------------------------------------------------
 MIDDLEWARE_CLASSES = (
     # Make sure djangosecure.middleware.SecurityMiddleware is listed first
     'djangular.middleware.DjangularUrlMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
+		# note custome middle-ware goes after these two. In this order:
+    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+		# end note
+		#'email_auth.middleware.EmailAuthMiddleware',
     'shop.middleware.CustomerMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.gzip.GZipMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'cms.middleware.language.LanguageCookieMiddleware',
     'cms.middleware.user.CurrentUserMiddleware',
     'cms.middleware.page.CurrentPageMiddleware',
     'cms.middleware.toolbar.ToolbarMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
 # MIGRATIONS CONFIGURATION
 # ------------------------------------------------------------------------------
 MIGRATION_MODULES = {
-    'sites': 'maxoshop_project.contrib.sites.migrations'
+    'sites': 'maxoshop_project.contrib.sites.migrations',
+		#'maxoshop': 'maxoshop.migrations_{}'.format(polymorphic)
+		'maxoshop': 'maxoshop.migrations_polymorphic'
 }
 
 # DEBUG
@@ -278,7 +287,8 @@ ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 
 # Custom user app defaults
 # Select the correct user model
-AUTH_USER_MODEL = 'users.User'
+#AUTH_USER_MODEL = 'users.User'
+AUTH_USER_MODEL = 'email_auth.User'
 LOGIN_REDIRECT_URL = 'users:redirect'
 LOGIN_URL = 'account_login'
 
@@ -549,13 +559,14 @@ HAYSTACK_ROUTERS = ('shop.search.routers.LanguageRouter',)
 
 ############################################
 # settings for django-shop and its plugins
+SHOP_APP_LABEL = 'maxoshop'
 
 SHOP_VALUE_ADDED_TAX = Decimal(19)
 SHOP_DEFAULT_CURRENCY = 'EUR'
 SHOP_CART_MODIFIERS = (
-    'maxoshop.polymorphic_modifiers.MyShopCartModifier',
+    'maxoshop_project.maxoshop.polymorphic_modifiers.MyShopCartModifier',
     'shop.modifiers.taxes.CartExcludedTaxModifier',
-    'maxoshop.modifiers.PostalShippingModifier',
+    'maxoshop_project.maxoshop.modifiers.PostalShippingModifier',
     'shop.modifiers.defaults.PayInAdvanceModifier',
     'shop_stripe.modifiers.StripePaymentModifier',
 )

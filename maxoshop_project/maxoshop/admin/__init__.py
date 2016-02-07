@@ -7,13 +7,14 @@ from shop.admin.order import (PrintOrderAdminMixin, BaseOrderAdmin, OrderPayment
 from shop.models.order import OrderModel
 #from . import product
 from . import properties
+from .polymorphic import product
 
-if settings.SHOP_TUTORIAL == 'simple':
-    from .simple import smartcard
-elif settings.SHOP_TUTORIAL == 'i18n':
-    from .i18n import smartcard
-elif settings.SHOP_TUTORIAL == 'polymorphic':
-    from .polymorphic import product
+#if settings.SHOP_TUTORIAL == 'simple':
+#    from .simple import smartcard
+#elif settings.SHOP_TUTORIAL == 'i18n':
+#    from .i18n import smartcard
+#elif settings.SHOP_TUTORIAL == 'polymorphic':
+#    from .polymorphic import product
 
 admin.site.register(CustomerProxy, CustomerAdmin)
 

@@ -10,7 +10,8 @@ from parler.managers import TranslatableManager, TranslatableQuerySet
 from polymorphic.query import PolymorphicQuerySet
 from shop.models.product import BaseProductManager
 from shop.models.product import BaseProduct
-from myshop.models.properties import Manufacturer, ProductPage, ProductImage
+# go up to app_module
+from ...models.properties import Manufacturer, ProductPage, ProductImage
 
 
 class ProductQuerySet(TranslatableQuerySet, PolymorphicQuerySet):

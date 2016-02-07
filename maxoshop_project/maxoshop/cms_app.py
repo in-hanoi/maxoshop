@@ -10,14 +10,15 @@ from menus.menu_pool import menu_pool
 
 class ProductsListApp(CMSApp):
     name = _("Products List")
-    urls = ['myshop.urls.{}_products'.format('polymorphic' if settings.SHOP_TUTORIAL == 'polymorphic' else 'simple')]
+    #urls = ['maxoshop.urls.{}_products'.format('polymorphic' if settings.SHOP_TUTORIAL == 'polymorphic' else 'simple')]
+    urls = ['maxoshop.urls.{}_products'.format('polymorphic')]
 
 apphook_pool.register(ProductsListApp)
 
 
 class ProductSearchApp(CMSApp):
     name = _("Search")
-    urls = ['myshop.urls.search']
+    urls = ['maxoshop.urls.search']
 
 apphook_pool.register(ProductSearchApp)
 
