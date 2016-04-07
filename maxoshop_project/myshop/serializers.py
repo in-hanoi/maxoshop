@@ -13,7 +13,8 @@ from .search_indexes import myshop_search_index_classes
 if settings.SHOP_TUTORIAL == 'simple':
     Product = import_string('myshop.models.simple.smartcard.SmartCard')
 elif settings.SHOP_TUTORIAL == 'i18n':
-    Product = import_string('myshop.models.i18n.smartcard.SmartCard')
+    #Product = import_string('.models.i18n.smartcard.SmartCard')
+    from .models.i18n.smartcard import SmartCard as Product
 else:
     Product = import_string('myshop.models.polymorphic.product.Product')
 

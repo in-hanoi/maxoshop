@@ -134,7 +134,7 @@ MIGRATION_MODULES = {
     'sites': 'maxoshop_project.contrib.sites.migrations',
 		#'maxoshop': 'maxoshop.migrations_{}'.format(polymorphic)
 		#'maxoshop': 'maxoshop.migrations_polymorphic',
-    'myshop': 'myshop.migrations.{}'.format(SHOP_TUTORIAL)
+    'myshop': 'maxoshop_project.myshop.migrations.{}'.format(SHOP_TUTORIAL)
 }
 
 # DEBUG

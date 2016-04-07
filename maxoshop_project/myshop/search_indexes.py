@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+#from __future__ import absolute_import
 
 from django.conf import settings
 from shop.search.indexes import ProductIndex as ProductIndexBase
@@ -8,7 +9,7 @@ from haystack import indexes
 if settings.SHOP_TUTORIAL == 'simple':
     from myshop.models.simple.smartcard import SmartCard
 elif settings.SHOP_TUTORIAL == 'i18n':
-    from myshop.models.i18n.smartcard import SmartCard
+    from .models.i18n.smartcard import SmartCard
 elif settings.SHOP_TUTORIAL == 'polymorphic':
     from myshop.models.polymorphic.smartcard import SmartCard
     from myshop.models.polymorphic.smartphone import SmartPhoneModel

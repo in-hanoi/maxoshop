@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from django.conf.urls import patterns, url
 from shop.views.catalog import AddToCartView, CMSPageProductListView, ProductRetrieveView
 from shop.search.views import SearchView
-from myshop.serializers import (ProductSummarySerializer, ProductDetailSerializer,
+from ..serializers import (ProductSummarySerializer, ProductDetailSerializer,
     CatalogSearchSerializer)
 
 urlpatterns = patterns('',

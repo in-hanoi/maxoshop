@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from django.conf.urls import patterns, url
 from shop.search.views import SearchView
-from myshop.serializers import ProductSearchSerializer
+from ..serializers import ProductSearchSerializer
 
 urlpatterns = patterns('',
     url(r'^', SearchView.as_view(
