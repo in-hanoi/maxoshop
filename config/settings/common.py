@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+## -*- coding: utf-8 -*-
 """
 Django settings for maxoshop project.
 
@@ -18,6 +18,12 @@ ROOT_DIR = environ.Path(__file__) - 3  # (/a/b/myfile.py - 3 = /)
 APPS_DIR = ROOT_DIR.path('maxoshop_project')
 
 env = environ.Env()
+
+SHOP_TUTORIAL = 'i18n'
+if SHOP_TUTORIAL not in ('simple', 'i18n', 'polymorphic',):
+    raise ImproperlyConfigured("Environment DJANGO_SHOP_TUTORIAL has an invalid value `{}`".format(SHOP_TUTORIAL))
+
+
 
 # APP CONFIGURATION
 # ------------------------------------------------------------------------------
@@ -42,13 +48,14 @@ DJANGO_APPS = (
     'cmsplugin_cascade.extra_fields',
     'cmsplugin_cascade.segmentation',
     'cms_bootstrap3',
+    'djng',
 		#
     'adminsortable2',
     'rest_framework',
     'rest_framework.authtoken',
     'rest_auth',
+    'django_fsm',
     'fsm_admin',
-    'djangular',
     'menus',
     'treebeard',
     'compressor',
@@ -84,7 +91,8 @@ THIRD_PARTY_APPS = (
 LOCAL_APPS = (
     #'maxoshop_project.users',  # custom users app, load before cms
     # Your stuff: custom apps go here
-    'maxoshop_project.maxoshop',  # custom users app
+    #'maxoshop_project.maxoshop',  # custom users app
+    'maxoshop_project.myshop',  # custom users app
 )
 
 # Apps to load last
@@ -95,40 +103,49 @@ LAST_APPS = (
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS + LAST_APPS
 
 # MIDDLEWARE CONFIGURATION
+# Middlewares are processed in reverse order.
 # ------------------------------------------------------------------------------
+
 MIDDLEWARE_CLASSES = (
     # Make sure djangosecure.middleware.SecurityMiddleware is listed first
-    'djangular.middleware.DjangularUrlMiddleware',
-    'django.middleware.common.CommonMiddleware',
-		# note custome middle-ware goes after these two. In this order:
+    'cms.middleware.utils.ApphookReloadMiddleware',
+    'djng.middleware.AngularUrlMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-		# end note
 		#'email_auth.middleware.EmailAuthMiddleware',
     'shop.middleware.CustomerMiddleware',
     'django.middleware.locale.LocaleMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.gzip.GZipMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'cms.middleware.language.LanguageCookieMiddleware',
     'cms.middleware.user.CurrentUserMiddleware',
     'cms.middleware.page.CurrentPageMiddleware',
     'cms.middleware.toolbar.ToolbarMiddleware',
+    'cms.middleware.language.LanguageCookieMiddleware',
+		'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
+
 
 # MIGRATIONS CONFIGURATION
 # ------------------------------------------------------------------------------
 MIGRATION_MODULES = {
     'sites': 'maxoshop_project.contrib.sites.migrations',
 		#'maxoshop': 'maxoshop.migrations_{}'.format(polymorphic)
-		'maxoshop': 'maxoshop.migrations_polymorphic'
+		#'maxoshop': 'maxoshop.migrations_polymorphic',
+    'myshop': 'myshop.migrations.{}'.format(SHOP_TUTORIAL)
 }
 
 # DEBUG
 # ------------------------------------------------------------------------------
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#debug
 DEBUG = env.bool("DJANGO_DEBUG", False)
+
+# DEBUG TOOLBAR
+# ------------------------------------------------------------------------------
+# See: http://django-debug-toolbar.readthedocs.org/en/1.0/installation.html#explicit-setup
+DEBUG_TOOLBAR_PATCH_SETTINGS = False
 
 # FIXTURE CONFIGURATION
 # ------------------------------------------------------------------------------
@@ -178,9 +195,6 @@ LANGUAGES = (
     ('en', "English"),
     ('de', "Deutsch"),
 )
-
-# See: https://docs.djangoproject.com/en/dev/ref/settings/#site-id
-SITE_ID = 1
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#use-i18n
 USE_I18N = True
@@ -257,6 +271,9 @@ STATICFILES_FINDERS = (
     'sass_processor.finders.CssFinder',
     'compressor.finders.CompressorFinder',
 )
+
+# See: https://docs.djangoproject.com/en/dev/ref/settings/#site-id
+SITE_ID = 1
 
 # MEDIA CONFIGURATION
 # ------------------------------------------------------------------------------
@@ -559,16 +576,18 @@ HAYSTACK_ROUTERS = ('shop.search.routers.LanguageRouter',)
 
 ############################################
 # settings for django-shop and its plugins
-SHOP_APP_LABEL = 'maxoshop'
+SHOP_APP_LABEL = 'myshop'
 
 SHOP_VALUE_ADDED_TAX = Decimal(19)
 SHOP_DEFAULT_CURRENCY = 'EUR'
 SHOP_CART_MODIFIERS = (
-    'maxoshop_project.maxoshop.polymorphic_modifiers.MyShopCartModifier',
+		'maxoshop_project.myshop.polymorphic_modifiers.MyShopCartModifier' if SHOP_TUTORIAL == 'polymorphic'
+    else 'shop.modifiers.defaults.DefaultCartModifier',
     'shop.modifiers.taxes.CartExcludedTaxModifier',
-    'maxoshop_project.maxoshop.modifiers.PostalShippingModifier',
+    'maxoshop_project.myshop.modifiers.PostalShippingModifier',
+    'maxoshop_project.myshop.modifiers.CustomerPickupModifier',
+    'maxoshop_project.myshop.modifiers.StripePaymentModifier',
     'shop.modifiers.defaults.PayInAdvanceModifier',
-    'shop_stripe.modifiers.StripePaymentModifier',
 )
 SHOP_EDITCART_NG_MODEL_OPTIONS = "{updateOn: 'default blur', debounce: {'default': 2500, 'blur': 0}}"
 

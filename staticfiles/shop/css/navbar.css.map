@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "../../../mnt/extdata/workspace/75_django_shop/django-shop/shop/static/shop/css/navbar.css",
+	"sources": [
+		"../../../mnt/extdata/workspace/75_django_shop/django-shop/shop/static/shop/css/navbar.scss"
+	],
+	"sourcesContent": [],
+	"mappings": ";AACC,WAAW,CAAC,oBAAoB,CAAX;EACpB,OAAO,EAAE,IAAI,CAAC,IAAI,GADG",
+	"names": []
+}

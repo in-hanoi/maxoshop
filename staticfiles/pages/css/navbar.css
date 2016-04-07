@@ -1,0 +1,59 @@
+/* line 4, /mnt/extdata/workspace/75_django_shop/maxoshop_project/maxoshop_project/myshop/static/pages/css/navbar.scss */
+.navbar .navbar-extra-top {
+  min-height: 50px;
+  border: 1px solid transparent;
+  border-bottom-color: #e7e7e7; }
+  /* line 8, /mnt/extdata/workspace/75_django_shop/maxoshop_project/maxoshop_project/myshop/static/pages/css/navbar.scss */
+  .navbar .navbar-extra-top .shop-brand {
+    text-align: center; }
+
+@media (max-width: 768px) {
+  /* line 12, /mnt/extdata/workspace/75_django_shop/maxoshop_project/maxoshop_project/myshop/static/pages/css/navbar.scss */
+  .navbar .expanded-nav {
+    display: none; } }
+
+@media (min-width: 768px) {
+  /* line 17, /mnt/extdata/workspace/75_django_shop/maxoshop_project/maxoshop_project/myshop/static/pages/css/navbar.scss */
+  .navbar .collapsed-nav {
+    display: none; } }
+
+@media (min-width: 1200px) {
+  /* line 26, /mnt/extdata/workspace/75_django_shop/maxoshop_project/maxoshop_project/myshop/static/pages/css/navbar.scss */
+  .navbar-form.shop-search-form input.form-control {
+    width: 40em; } }
+
+@media (min-width: 992px) and (max-width: 1200px) {
+  /* line 26, /mnt/extdata/workspace/75_django_shop/maxoshop_project/maxoshop_project/myshop/static/pages/css/navbar.scss */
+  .navbar-form.shop-search-form input.form-control {
+    width: 28em; } }
+
+/* line 34, /mnt/extdata/workspace/75_django_shop/maxoshop_project/maxoshop_project/myshop/static/pages/css/navbar.scss */
+.navbar-form.shop-search-form .input-group-addon {
+  cursor: pointer; }
+
+/* line 41, /mnt/extdata/workspace/75_django_shop/maxoshop_project/maxoshop_project/myshop/static/pages/css/navbar.scss */
+.navbar-right shop-auth-form {
+  padding-bottom: 10px;
+  min-width: 160px;
+  display: block; }
+
+/* line 47, /mnt/extdata/workspace/75_django_shop/maxoshop_project/maxoshop_project/myshop/static/pages/css/navbar.scss */
+.dropdown-menu > li > a {
+  margin-left: 0; }
+
+/* line 50, /mnt/extdata/workspace/75_django_shop/maxoshop_project/maxoshop_project/myshop/static/pages/css/navbar.scss */
+.alert {
+  padding: 5px 10px;
+  line-height: 20px; }
+
+@media (max-width: 768px) {
+  /* line 55, /mnt/extdata/workspace/75_django_shop/maxoshop_project/maxoshop_project/myshop/static/pages/css/navbar.scss */
+  body {
+    padding-top: 290px; } }
+
+@media (min-width: 768px) {
+  /* line 55, /mnt/extdata/workspace/75_django_shop/maxoshop_project/maxoshop_project/myshop/static/pages/css/navbar.scss */
+  body {
+    padding-top: 120px; } }
+
+/*# sourceMappingURL=../../../../../../../../../../static/pages/css/navbar.css.map */

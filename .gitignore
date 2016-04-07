@@ -63,3 +63,7 @@ tests/.hitch
 
 # MailHog binary
 mailhog
+
+# Environment Variables
+env.local.source
+env.production.source

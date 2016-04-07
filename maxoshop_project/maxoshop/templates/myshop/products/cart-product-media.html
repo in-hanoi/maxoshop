@@ -1,5 +1,0 @@
-{% load i18n thumbnail %}
-{% thumbnail product.sample_image 80x80 crop as thumb %}
-<a href="{{ product.get_absolute_url }}">
-	<img src="{{ thumb.url }}" width="{{ thumb.width }}" height="{{ thumb.height }}" />
-</a>
